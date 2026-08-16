@@ -1,0 +1,11 @@
+<!-- Pixel-grid 16px icon, used only for the smallest favicon.ico entry.
+     Same hazard stripes as favicon.svg, redrawn on a 16 grid so the
+     diagonals land on pixel boundaries instead of antialiasing to mud. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" shape-rendering="crispEdges">
+  <rect width="16" height="16" fill="#14161a"/>
+  <g fill="#f2a007">
+    <polygon points="0,6 6,0 0,0"/>
+    <polygon points="0,12 12,0 16,0 16,2 2,16 0,16"/>
+    <polygon points="8,16 16,8 16,14 14,16"/>
+  </g>
+</svg>

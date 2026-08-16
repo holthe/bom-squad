@@ -1,0 +1,19 @@
+<!-- Source for assets/logo.svg. Text is still live here; `make logo` runs
+     Inkscape with export-text-to-path so the committed logo does not depend
+     on the viewer's fonts. On this machine "Helvetica Neue"/Arial resolve
+     through fontconfig to Liberation Sans, which is metric-compatible with
+     what most non-Apple browser users see on the site itself. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 400" width="1240" height="400" role="img" aria-label="BOM SQUAD">
+  <defs>
+    <pattern id="haz" width="56" height="56" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <rect width="56" height="56" fill="#14161a"/>
+      <rect width="28" height="56" fill="#f2a007"/>
+    </pattern>
+  </defs>
+  <rect width="1240" height="400" fill="#14161a"/>
+  <rect x="0" y="0" width="1240" height="26" fill="url(#haz)"/>
+  <rect x="0" y="374" width="1240" height="26" fill="url(#haz)"/>
+  <text x="64" y="120" font-family="Liberation Sans, Arial, sans-serif" font-weight="bold" font-size="19" letter-spacing="3.5" fill="#8b919c">BEST EFFORT INDUSTRIES · DIVISION 008 · ORDNANCE DISPOSAL, TEXTUAL</text>
+  <text x="56" y="290" font-family="Liberation Sans, Arial, sans-serif" font-weight="bold" font-size="170" letter-spacing="7" fill="#d8dbe0">BOM <tspan fill="#f2a007">SQUAD</tspan></text>
+  <text x="64" y="348" font-family="Liberation Sans, Arial, sans-serif" font-weight="bold" font-size="22" letter-spacing="5" fill="#8b919c">IF YOU SEE NOTHING, SAY SOMETHING</text>
+</svg>

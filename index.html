@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOM SQUAD | Invisible Character Disposal</title>
+<meta name="description" content="Invisible character disposal since U+FEFF. If you can see the problem, it is not our department.">
+<meta name="robots" content="index, follow">
+
+<!-- PRODUCTION DOMAIN, hardcoded. bomsquad.dev is a candidate, not purchased.
+     If the site lands elsewhere, change the four absolute URLs below and the
+     footer of tools/og.html, then re-run `make og`. Those are the only two
+     files that name it; nothing derives it. -->
+<link rel="canonical" href="https://bomsquad.dev/">
+<meta name="theme-color" content="#14161a">
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BOM SQUAD">
+<meta property="og:url" content="https://bomsquad.dev/">
+<meta property="og:title" content="BOM SQUAD">
+<meta property="og:description" content="Invisible character disposal since U+FEFF.">
+<meta property="og:image" content="https://bomsquad.dev/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BOM SQUAD: invisible character disposal since U+FEFF. Hazard stripes on a dark background.">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BOM SQUAD">
+<meta name="twitter:description" content="Invisible character disposal since U+FEFF.">
+<meta name="twitter:image" content="https://bomsquad.dev/og.png">
+<meta name="twitter:image:alt" content="BOM SQUAD: invisible character disposal since U+FEFF. Hazard stripes on a dark background.">
+<style>
+  :root{
+    --bg:#14161a; --panel:#1c1f25; --panel2:#22262e; --amber:#f2a007; --amber-dim:#8a5f0a;
+    --text:#d8dbe0; --muted:#8b919c; --red:#e04b3a; --green:#4cae5a; --line:#31363f;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:"Helvetica Neue",Arial,sans-serif;line-height:1.55}
+  .wrap{max-width:880px;margin:0 auto;padding:0 20px}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+  a{color:var(--amber)}
+  button:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+  .stripe{height:16px;background:repeating-linear-gradient(-45deg,var(--amber) 0 14px,#14161a 14px 28px)}
+
+  header{padding:34px 0 30px;border-bottom:1px solid var(--line)}
+  header .unit{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted)}
+  header h1{font-size:clamp(38px,9vw,72px);font-weight:900;letter-spacing:.04em;line-height:.95;text-transform:uppercase}
+  header h1 span{color:var(--amber)}
+  header .tag{margin-top:10px;color:var(--muted);font-size:15px;max-width:560px}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));border-bottom:1px solid var(--line)}
+  .stats div{padding:18px 20px;border-right:1px solid var(--line)}
+  .stats div:last-child{border-right:0}
+  .stats b{display:block;font-size:24px;color:var(--amber);font-variant-numeric:tabular-nums}
+  .stats span{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+  section{padding:44px 0;border-bottom:1px solid var(--line)}
+  .kicker{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);font-weight:700}
+  section h2{font-size:26px;font-weight:900;text-transform:uppercase;letter-spacing:.03em;margin:6px 0 8px}
+  section p.intro{color:var(--muted);max-width:600px}
+
+  textarea{width:100%;min-height:150px;margin-top:18px;background:var(--panel);color:var(--text);border:1px solid var(--line);padding:14px;font-size:14px;resize:vertical}
+  textarea::placeholder{color:#5b616b}
+  .btnrow{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  button{font:inherit;font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:13px;padding:12px 22px;border:0;cursor:pointer;background:var(--amber);color:#14161a}
+  button:hover{background:#ffb51f}
+  button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+  button.secondary:hover{background:#2a2f39}
+  button:disabled{opacity:.4;cursor:not-allowed}
+
+  .report{margin-top:22px;display:none}
+  .report.show{display:block}
+  .banner{padding:14px 16px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:13px}
+  .banner.clear{background:#15321c;color:var(--green);border:1px solid #275c33}
+  .banner.hot{background:#3a1713;color:#ff8d7e;border:1px solid #6b2a22}
+  table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px;background:var(--panel)}
+  th{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);text-align:left;padding:9px 10px;border-bottom:2px solid var(--amber-dim)}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  td.cp{white-space:nowrap;color:var(--amber)}
+  .cls{font-size:10px;letter-spacing:.1em;padding:2px 7px;border:1px solid;white-space:nowrap}
+  .cls.A{color:#ff8d7e;border-color:#6b2a22}
+  .cls.B{color:var(--amber);border-color:var(--amber-dim)}
+  .cls.C{color:#9db7ff;border-color:#33436e}
+  .cls.D{color:var(--muted);border-color:var(--line)}
+
+  .safe{margin-top:18px;display:none}
+  .safe.show{display:block}
+  .safe h3{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+  .safe pre{background:var(--panel);border:1px solid #275c33;padding:14px;white-space:pre-wrap;word-break:break-word;font-size:14px;max-height:220px;overflow:auto}
+  .certline{margin-top:12px;font-size:12px;color:var(--muted)}
+  .certline b{color:var(--text);letter-spacing:.08em}
+
+  .guide td:first-child{font-size:16px}
+  .fine{font-size:12px;color:var(--muted);margin-top:14px;max-width:640px}
+
+  footer{padding:32px 0 46px;font-size:12px;color:var(--muted)}
+  footer .doc{letter-spacing:.14em;text-transform:uppercase;font-size:11px}
+  footer p{margin-top:8px;max-width:680px}
+</style>
+</head>
+<body>
+
+<div class="stripe" aria-hidden="true"></div>
+
+<header>
+  <div class="wrap">
+    <div class="unit">Best Effort Industries · Division 008 · Ordnance Disposal, Textual</div>
+    <h1>BOM <span>SQUAD</span></h1>
+    <p class="tag">Invisible character disposal since U+FEFF. If you can see the problem, it is not our department.</p>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="wrap" style="display:contents">
+    <div><b id="statChars">2,147,001</b><span>Characters neutralized</span></div>
+    <div><b>0</b><span>Visible results</span></div>
+    <div><b>1</b><span>Technicians (also the dispatcher)</span></div>
+    <div><b>100%</b><span>Safe distance maintained</span></div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">Incident intake</div>
+    <h2>Request a disposal</h2>
+    <p class="intro">Paste any text below. Suspect material includes copy from word processors, chat apps, PDFs, and anything a colleague described as "should just work". The squad will identify concealed ordnance and, on your order, render it safe.</p>
+    <textarea id="input" spellcheck="false" placeholder="Paste suspect text here. Do not shake it."></textarea>
+    <div class="btnrow">
+      <button id="scanBtn">Scan for ordnance</button>
+      <button id="safeBtn" class="secondary" disabled>Render safe</button>
+      <button id="demoBtn" class="secondary">No text? Load a training sample</button>
+    </div>
+
+    <div class="report" id="report">
+      <div class="banner" id="banner"></div>
+      <div id="tblWrap"></div>
+      <div class="safe" id="safeOut">
+        <h3>Rendered safe · cleared for production</h3>
+        <pre id="safeText"></pre>
+        <div class="btnrow"><button id="copyBtn" class="secondary">Copy cleared text</button></div>
+        <div class="certline" id="certLine"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">Field guide</div>
+    <h2>Known ordnance</h2>
+    <table class="guide">
+      <thead><tr><th>Device</th><th>Designation</th><th>Class</th><th>Field notes</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">(none)</td><td class="cp mono">U+FEFF</td><td><span class="cls A">CLASS A</span></td><td>Byte order mark. The squad's namesake. Sits at the front of a file and detonates the parser. Planted, in most cases, by a text editor trying to help.</td></tr>
+        <tr><td class="mono">(none)</td><td class="cp mono">U+200B</td><td><span class="cls A">CLASS A</span></td><td>Zero width space. Invisible, weightless, and directly responsible for "the strings are equal but the strings are not equal".</td></tr>
+        <tr><td class="mono">(none)</td><td class="cp mono">U+202E</td><td><span class="cls A">CLASS A</span></td><td>Right-to-left override. Reverses everything after it. Genuinely used in malware filenames. The squad does not joke about this one. Much.</td></tr>
+        <tr><td class="mono">&nbsp;·&nbsp;</td><td class="cp mono">U+00A0</td><td><span class="cls B">CLASS B</span></td><td>No-break space. Looks exactly like a space. Is not a space. Discovered, typically, at 23:40 on a Friday.</td></tr>
+        <tr><td class="mono">" "</td><td class="cp mono">U+201C, U+201D</td><td><span class="cls B">CLASS B</span></td><td>Smart quotes. Inserted by word processors into code samples, where they are extremely stupid.</td></tr>
+        <tr><td class="mono">-</td><td class="cp mono">U+00AD</td><td><span class="cls C">CLASS C</span></td><td>Soft hyphen. Appears only when it feels the line needs it. Lives in copied PDF text. Cannot be reasoned with.</td></tr>
+        <tr><td class="mono">—</td><td class="cp mono">U+2014</td><td><span class="cls D">CLASS D</span></td><td>Em dash. Visible, legal in most jurisdictions, and heavily overused in machine-written prose. Detected and reported. Disposal is a matter of editorial policy, not public safety. The squad has opinions but keeps them in the truck.</td></tr>
+      </tbody>
+    </table>
+    <p class="fine">Classification reflects blast radius in production. Class A: build fails, nobody knows why. Class B: build succeeds, output wrong, nobody knows why. Class C: intermittent, unreproducible, closed as CANNOT REPRODUCE. Class D: reproducible, visible, argued about in review for forty minutes.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="doc">DOC: BEI-008 · REV 1.0 / FINAL / THIS DOCUMENT CONTAINS NO BYTE ORDER MARK (VERIFIED ONCE)</div>
+    <p>BOM Squad is a division of <a href="https://besteffortindustries.com">Best Effort Industries</a>. All disposal is performed locally in your browser. No text is transmitted, stored, or read with interest. Certificates of disposal are legally binding on no one and expire on issue.</p>
+    <p>In case of live U+202E in a filename, do not approach. Evacuate the directory and notify someone with more patience.</p>
+    <p>© 2026 BOM SQUAD · IF YOU SEE NOTHING, SAY SOMETHING</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var HAZARDS = {
+    0xFEFF:{name:'Byte order mark', cls:'A', act:'remove'},
+    0x200B:{name:'Zero width space', cls:'A', act:'remove'},
+    0x200C:{name:'Zero width non-joiner', cls:'A', act:'remove'},
+    0x200D:{name:'Zero width joiner', cls:'A', act:'remove'},
+    0x2060:{name:'Word joiner', cls:'A', act:'remove'},
+    0x202E:{name:'Right-to-left override', cls:'A', act:'remove'},
+    0x202D:{name:'Left-to-right override', cls:'A', act:'remove'},
+    0x00A0:{name:'No-break space', cls:'B', act:'space'},
+    0x2018:{name:'Left smart quote', cls:'B', act:"'"},
+    0x2019:{name:'Right smart quote', cls:'B', act:"'"},
+    0x201C:{name:'Left smart double quote', cls:'B', act:'"'},
+    0x201D:{name:'Right smart double quote', cls:'B', act:'"'},
+    0x00AD:{name:'Soft hyphen', cls:'C', act:'remove'},
+    0x2011:{name:'Non-breaking hyphen', cls:'C', act:'-'},
+    0x2014:{name:'Em dash', cls:'D', act:'keep'}
+  };
+  var CLS_LABEL = {A:'CLASS A', B:'CLASS B', C:'CLASS C', D:'CLASS D'};
+
+  var input = document.getElementById('input');
+  var report = document.getElementById('report');
+  var banner = document.getElementById('banner');
+  var tblWrap = document.getElementById('tblWrap');
+  var safeBtn = document.getElementById('safeBtn');
+  var safeOut = document.getElementById('safeOut');
+  var lastFinds = [];
+
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+  function scan(){
+    var text = input.value;
+    lastFinds = [];
+    for(var i=0;i<text.length;i++){
+      var cp = text.charCodeAt(i);
+      if(HAZARDS[cp]) lastFinds.push({pos:i, cp:cp, h:HAZARDS[cp]});
+    }
+    report.classList.add('show');
+    safeOut.classList.remove('show');
+
+    if(!text){
+      banner.className='banner clear';
+      banner.textContent='Nothing submitted. Site declared safe by default. Invoice follows.';
+      tblWrap.innerHTML=''; safeBtn.disabled=true; return;
+    }
+    if(lastFinds.length===0){
+      banner.className='banner clear';
+      banner.textContent='All clear. ' + text.length.toLocaleString() + ' characters swept, 0 devices found. Remain vigilant.';
+      tblWrap.innerHTML='<p class="fine">A clean sweep is rare and should be treated as suspicious. Consider where this text has been.</p>';
+      safeBtn.disabled=true; return;
+    }
+    var live = lastFinds.filter(function(f){return f.h.act!=='keep'}).length;
+    banner.className='banner hot';
+    banner.textContent = lastFinds.length + ' device' + (lastFinds.length===1?'':'s') + ' located (' + live + ' live). Perimeter established. Await render-safe order.';
+    var rows = lastFinds.slice(0,200).map(function(f){
+      return '<tr><td class="cp mono">U+' + f.cp.toString(16).toUpperCase().padStart(4,'0') + '</td>'
+        + '<td>' + f.h.name + '</td>'
+        + '<td><span class="cls ' + f.h.cls + '">' + CLS_LABEL[f.h.cls] + '</span></td>'
+        + '<td class="mono">char ' + f.pos + '</td>'
+        + '<td>' + (f.h.act==='keep' ? 'Reported. Left in place per editorial rules of engagement.' : 'Marked for disposal.') + '</td></tr>';
+    }).join('');
+    var more = lastFinds.length>200 ? '<p class="fine">' + (lastFinds.length-200) + ' additional devices not listed. This is a document, not a battlefield report.</p>' : '';
+    tblWrap.innerHTML = '<table><thead><tr><th>Codepoint</th><th>Device</th><th>Class</th><th>Position</th><th>Order</th></tr></thead><tbody>' + rows + '</tbody></table>' + more;
+    safeBtn.disabled = (live===0);
+  }
+
+  function renderSafe(){
+    var text = input.value;
+    var out = '';
+    for(var i=0;i<text.length;i++){
+      var cp = text.charCodeAt(i);
+      var h = HAZARDS[cp];
+      if(!h || h.act==='keep'){ out += text[i]; }
+      else if(h.act==='remove'){ /* disposed */ }
+      else if(h.act==='space'){ out += ' '; }
+      else { out += h.act; }
+    }
+    document.getElementById('safeText').textContent = out;
+    var seed=0; for(var k=0;k<text.length;k++){ seed=(seed*33 + text.charCodeAt(k))>>>0; }
+    var disposed = lastFinds.filter(function(f){return f.h.act!=='keep'}).length;
+    var kept = lastFinds.length - disposed;
+    document.getElementById('certLine').innerHTML =
+      '<b>DISPOSAL CERTIFICATE ' + 'BS-' + String(seed%1000000).padStart(6,'0') + '</b> · '
+      + disposed + ' device' + (disposed===1?'':'s') + ' rendered safe, '
+      + kept + ' reported and released on their own recognizance. Scene returned to the public. No further action.';
+    safeOut.classList.add('show');
+    var stat = document.getElementById('statChars');
+    var cur = parseInt(stat.textContent.replace(/,/g,''),10) + disposed;
+    stat.textContent = cur.toLocaleString('en-US');
+  }
+
+  document.getElementById('scanBtn').addEventListener('click', scan);
+  safeBtn.addEventListener('click', renderSafe);
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    var t = document.getElementById('safeText').textContent;
+    if(navigator.clipboard){ navigator.clipboard.writeText(t); this.textContent='Copied. Handle normally.'; }
+  });
+  document.getElementById('demoBtn').addEventListener('click', function(){
+    input.value = '\uFEFFconst greeting = \u201Chello\u2019s world\u201D;\u200B\nif (name ==\u00A0"admin") {\u200D\n  launch();\u00AD // reviewed\u2014approved\n}\u2060';
+    scan();
+  });
+})();
+</script>
+</body>
+</html>

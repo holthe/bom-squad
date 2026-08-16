@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" shape-rendering="crispEdges">
+  <title>BOM SQUAD</title>
+  <rect width="64" height="64" fill="#14161a"/>
+  <g fill="#f2a007">
+    <polygon points="0,24 24,0 0,0"/>
+    <polygon points="0,48 48,0 64,0 64,8 8,64 0,64"/>
+    <polygon points="32,64 64,32 64,56 56,64"/>
+  </g>
+</svg>

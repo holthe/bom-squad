@@ -1,0 +1,8 @@
+# Crawl freely. Everything worth finding here is visible,
+# which is more than can be said for the material we handle.
+
+User-agent: *
+Allow: /
+
+# There is no sitemap. There is one page and a 404.
+# If you find a third, do not approach it. Report it.
