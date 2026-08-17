@@ -241,12 +241,12 @@ Until then the site is reachable at `bomsquad.pages.dev`.
 
 ### Related
 
-BOM SQUAD identifies as division 008 of
-[Best Effort Industries](https://besteffortindustries.com). The table in
-that repository's `index.html` currently ends at 005, which either means
-divisions 006 and 007 are classified or means nobody has updated the
-table. Both explanations are consistent with the holding entity's stated
-service tier.
+BOM SQUAD is a division of
+[Best Effort Industries](https://besteffortindustries.com), currently
+queued in that register's Schedule B under a provisional number. Real
+division numbers are assigned by the register on entry into service and
+are recorded nowhere else, including here, where a copy would only go
+stale and then off.
 
 ## License
 
