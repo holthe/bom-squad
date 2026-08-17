@@ -100,6 +100,24 @@
   .guide td:first-child{font-size:16px}
   .fine{font-size:12px;color:var(--muted);margin-top:14px;max-width:640px}
 
+  /* The incident-report table scrolls sideways on narrow screens rather
+     than crushing its five columns into slivers. */
+  #tblWrap{overflow-x:auto}
+  #tblWrap table{min-width:540px}
+
+  /* The field guide restacks on narrow screens: device, designation and
+     class on one line, the field notes below at full width. */
+  @media (max-width:640px){
+    .guide thead{display:none}
+    .guide, .guide tbody{display:block}
+    .guide tr{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px;
+      border-bottom:1px solid var(--line);padding:12px 0}
+    .guide tr:last-child{border-bottom:none}
+    .guide td{display:block;border-bottom:none;padding:0}
+    .guide td:nth-child(3){margin-left:auto}
+    .guide td:nth-child(4){flex-basis:100%;margin-top:6px}
+  }
+
   footer{padding:32px 0 46px;font-size:12px;color:var(--muted)}
   footer .doc{letter-spacing:.14em;text-transform:uppercase;font-size:11px}
   footer p{margin-top:8px;max-width:680px}
