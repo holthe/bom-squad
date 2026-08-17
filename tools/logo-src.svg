@@ -13,7 +13,7 @@
   <rect width="1240" height="400" fill="#14161a"/>
   <rect x="0" y="0" width="1240" height="26" fill="url(#haz)"/>
   <rect x="0" y="374" width="1240" height="26" fill="url(#haz)"/>
-  <text x="64" y="120" font-family="Liberation Sans, Arial, sans-serif" font-weight="bold" font-size="19" letter-spacing="3.5" fill="#8b919c">BEST EFFORT INDUSTRIES · DIVISION 008 · ORDNANCE DISPOSAL, TEXTUAL</text>
+  <text x="64" y="120" font-family="Liberation Sans, Arial, sans-serif" font-weight="bold" font-size="19" letter-spacing="3.5" fill="#8b919c">ORDNANCE DISPOSAL, TEXTUAL</text>
   <text x="56" y="290" font-family="Liberation Sans, Arial, sans-serif" font-weight="bold" font-size="170" letter-spacing="7" fill="#d8dbe0">BOM <tspan fill="#f2a007">SQUAD</tspan></text>
   <text x="64" y="348" font-family="Liberation Sans, Arial, sans-serif" font-weight="bold" font-size="22" letter-spacing="5" fill="#8b919c">IF YOU SEE NOTHING, SAY SOMETHING</text>
 </svg>
