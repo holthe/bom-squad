@@ -67,7 +67,7 @@
   section p.intro{color:var(--muted);max-width:600px}
 
   textarea{width:100%;min-height:150px;margin-top:18px;background:var(--panel);color:var(--text);border:1px solid var(--line);padding:14px;font-size:14px;resize:vertical}
-  textarea::placeholder{color:#5b616b}
+  textarea::placeholder{color:#7d838d}
   .btnrow{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
   button{font:inherit;font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:13px;padding:12px 22px;border:0;cursor:pointer;background:var(--amber);color:#14161a}
   button:hover{background:#ffb51f}
@@ -149,7 +149,8 @@
     <div class="kicker">Incident intake</div>
     <h2>Request a disposal</h2>
     <p class="intro">Paste any text below. Suspect material includes copy from word processors, chat apps, PDFs, and anything a colleague described as "should just work". The squad will identify concealed ordnance and, on your order, render it safe.</p>
-    <textarea id="input" spellcheck="false" placeholder="Paste suspect text here. Do not shake it."></textarea>
+    <label for="input">Suspect text</label>
+      <textarea id="input" spellcheck="false" placeholder="Paste suspect text here. Do not shake it."></textarea>
     <div class="btnrow">
       <button id="scanBtn">Scan for ordnance</button>
       <button id="safeBtn" class="secondary" disabled>Render safe</button>
@@ -176,7 +177,7 @@
     <table class="guide">
       <thead><tr><th>Device</th><th>Designation</th><th>Class</th><th>Field notes</th></tr></thead>
       <tbody>
-        <tr><td class="mono">(none)</td><td class="cp mono">U+FEFF</td><td><span class="cls A">CLASS A</span></td><td>Byte order mark. The squad's namesake. Sits at the front of a file and detonates the parser. Planted, in most cases, by a text editor trying to help.</td></tr>
+        <tr><td class="mono">(none)</td><td class="cp mono">U+FEFF</td><td><span class="cls A">CLASS A</span></td><td>Byte order mark. The squad's namesake. Sits at the front of a file and detonates any parser that expects the first byte to be something else, which is most of them outside the ones written to look for it. Planted, in most cases, by a text editor trying to help.</td></tr>
         <tr><td class="mono">(none)</td><td class="cp mono">U+200B</td><td><span class="cls A">CLASS A</span></td><td>Zero width space. Invisible, weightless, and directly responsible for "the strings are equal but the strings are not equal".</td></tr>
         <tr><td class="mono">(none)</td><td class="cp mono">U+202E</td><td><span class="cls A">CLASS A</span></td><td>Right-to-left override. Reverses everything after it. Genuinely used in malware filenames. The squad does not joke about this one. Much.</td></tr>
         <tr><td class="mono">&nbsp;·&nbsp;</td><td class="cp mono">U+00A0</td><td><span class="cls B">CLASS B</span></td><td>No-break space. Looks exactly like a space. Is not a space. Discovered, typically, at 23:40 on a Friday.</td></tr>
@@ -201,11 +202,11 @@
 <script>
 (function(){
   var HAZARDS = {
-    0xFEFF:{name:'Byte order mark', cls:'A', act:'remove'},
+    0xFEFF:{name:'Byte order mark', cls:'A', act:'remove'},  /* reclassified below when not at offset 0 */
     0x200B:{name:'Zero width space', cls:'A', act:'remove'},
-    0x200C:{name:'Zero width non-joiner', cls:'A', act:'remove'},
-    0x200D:{name:'Zero width joiner', cls:'A', act:'remove'},
-    0x2060:{name:'Word joiner', cls:'A', act:'remove'},
+    0x200C:{name:'Zero width non-joiner', cls:'A', act:'keep', why:'Load-bearing in Persian and Indic orthography.'},
+    0x200D:{name:'Zero width joiner', cls:'A', act:'keep', why:'Holds emoji sequences and Indic conjuncts together.'},
+    0x2060:{name:'Word joiner', cls:'A', act:'keep', why:'Suppresses a line break on purpose.'},
     0x202E:{name:'Right-to-left override', cls:'A', act:'remove'},
     0x202D:{name:'Left-to-right override', cls:'A', act:'remove'},
     0x00A0:{name:'No-break space', cls:'B', act:'space'},
@@ -229,12 +230,22 @@
 
   function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
 
+  /* U+FEFF is a byte order mark only at the head of the stream. Anywhere
+     else it is a zero width no-break space, which is content, and the Squad
+     does not remove content. */
+  var FEFF_INLINE = {name:'Zero width no-break space', cls:'B', act:'keep',
+    why:'Not at offset 0, so it is not a signature. It is a character somebody typed.'};
+  function classify(cp, pos){
+    if(cp === 0xFEFF && pos !== 0) return FEFF_INLINE;
+    return HAZARDS[cp];
+  }
+
   function scan(){
     var text = input.value;
     lastFinds = [];
     for(var i=0;i<text.length;i++){
       var cp = text.charCodeAt(i);
-      if(HAZARDS[cp]) lastFinds.push({pos:i, cp:cp, h:HAZARDS[cp]});
+      if(HAZARDS[cp]) lastFinds.push({pos:i, cp:cp, h:classify(cp, i)});
     }
     report.classList.add('show');
     safeOut.classList.remove('show');
@@ -258,7 +269,7 @@
         + '<td>' + f.h.name + '</td>'
         + '<td><span class="cls ' + f.h.cls + '">' + CLS_LABEL[f.h.cls] + '</span></td>'
         + '<td class="mono">char ' + f.pos + '</td>'
-        + '<td>' + (f.h.act==='keep' ? 'Reported. Left in place per editorial rules of engagement.' : 'Marked for disposal.') + '</td></tr>';
+        + '<td>' + (f.h.act==='keep' ? ('Reported, left in place. ' + (f.h.why || 'Editorial rules of engagement.')) : 'Marked for disposal.') + '</td></tr>';
     }).join('');
     var more = lastFinds.length>200 ? '<p class="fine">' + (lastFinds.length-200) + ' additional devices not listed. This is a document, not a battlefield report.</p>' : '';
     tblWrap.innerHTML = '<table><thead><tr><th>Codepoint</th><th>Device</th><th>Class</th><th>Position</th><th>Order</th></tr></thead><tbody>' + rows + '</tbody></table>' + more;
@@ -270,7 +281,7 @@
     var out = '';
     for(var i=0;i<text.length;i++){
       var cp = text.charCodeAt(i);
-      var h = HAZARDS[cp];
+      var h = classify(cp, i);
       if(!h || h.act==='keep'){ out += text[i]; }
       else if(h.act==='remove'){ /* disposed */ }
       else if(h.act==='space'){ out += ' '; }
